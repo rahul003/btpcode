@@ -350,3 +350,11 @@ sailing
 total
 ongoing
 live
+getting
+get
+put
+hit
+hitting
+working
+playing
+shot

@@ -133,17 +133,19 @@ def extractFeatures(results):
 	for row in results:
 		#print row
 
-		if not counttoprint%1000:
-			print counttoprint
+		#if not counttoprint%1000:
+		#	print counttoprint
 		text = row[3].lower()
 		initddict()
 
 		if not text[0:2]=='0.1':
 			lines = text.split('.')
 			for line in lines:
+
 				line.strip('\n')
-				tokensl = line.split(' ')
-				#tokens = tokenizer.tokenize(line)
+				#line = line.replace(',',' ')
+				#tokensl = line.split(' ')
+				tokensl = tokenizer.tokenize(line)
 				tokens = (Set(tokensl) - stopwords)
 				tokens = [stemmer.stem(t) for t in tokens]
 				tokensl = [stemmer.stem(t) for t in tokensl]
@@ -198,42 +200,43 @@ def extractFeatures(results):
 							#print word, line
 							clas = reversecollection[word]
 							if negation:
-								print 'negated', row[0],row[1],row[2], line, word
+								#print 'negated', row[0],row[1],row[2], line, word
 								clas = getOpp(clas)#addtooppclass
 								if clas == None:
 									continue
 								negation = False
-							if clas =='dri':
-								day = int(float(row[1]))
-								if day==1 or day==2:
-									pitchwords['flat']['flat']+=1
-								else:
-									pitchwords['spin']['spin']+=1
-							if clas == 'green':
-								pitchwords['bounc']['bounc']+=1
-								pitchwords['pace']['pace']+=1	
-								pitchwords['swing']['swing']+=1	
+							# if clas =='dri':
+							# 	day = int(float(row[1]))
+							# 	if day==1 or day==2:
+							# 		pitchwords['flat']['flat']+=1
+							# 	else:
+							# 		pitchwords['spin']['spin']+=1
+							# if clas == 'green':
+							# 	pitchwords['bounc']['bounc']+=1
+							# 	pitchwords['pace']['pace']+=1	
+							# 	pitchwords['swing']['swing']+=1	
 							# if clas == 'grass':
 							# 	pitchwords['bounc']['bounc']+=1
+
 							# 	pitchwords['pace']['pace']+=1	
 							#print clas, word, pitchwords
 							try:
-								#print clas
+								#print clas, word, line#, tokensl
 								pitchwords[clas][clas]+=1
 							except:
 								print 'pitch:',clas, word, reversecollection[word],row[0],row[1],row[2]
 			if not isEmpty(weatherwords):
 				s=0
 				t=0
-				for w in weatherwords['rain']:
-					if weatherwords['rain'][w]!=0:
-						s+=1
-				for w in weatherwords['hot']:
-					if weatherwords['hot'][w]!=0:
-						t+=1
-				if s>0 and t>0:
-					for w in weatherwords['rain']:
-						weatherwords['rain'][w]=0
+				# for w in weatherwords['rain']:
+				# 	if weatherwords['rain'][w]!=0:
+				# 		s+=1
+				# for w in weatherwords['hot']:
+				# 	if weatherwords['hot'][w]!=0:
+				# 		t+=1
+				# if s>0 and t>0:
+				# 	for w in weatherwords['rain']:
+				# 		weatherwords['rain'][w]=0
 
 				query = "insert into weather_new(testid,day,session"
 				for collection in weatherwords:
@@ -252,9 +255,9 @@ def extractFeatures(results):
 					cursor.execute(query)
 					db.commit()
 				except mdb.IntegrityError:
-					#pass
-					print "failed to insert data"
-					print query         
+					pass
+					#print "failed to insert data"
+					#print query         
 			else:
 				pass
 				#print 'empty'
@@ -273,16 +276,16 @@ def extractFeatures(results):
 						count+=pitchwords[collection][word] 
 					query+=","+str(count)
 				query+=")"
-				# print query
+				#print query
 				try:
 					#pass
 					cursor.execute(query)
 					db.commit()
 					counttoprint+=1
 				except mdb.IntegrityError:
-					#pass
-					print "failed to insert data"
-					print query         
+					pass
+					# print "failed to insert data"
+					# print query         
 			else:
 				pass
 				#print 'empty'
@@ -374,7 +377,7 @@ def addPaceBounce():
 #db = mdb.connect("192.168.201.1","rahul","rahul123","cridatics",use_unicode = True, charset = "utf8")
 db = mdb.connect("10.11.12.14","rahul","rahul123","cridatics",use_unicode = True, charset = "utf8")
 cursor = db.cursor()
-query = "select testid,day,session,text from envtextnew"# where testid in (select distinct testid from commentary where bat='293')"
+query = "select testid,day,session,text from envtextnew"# where testid=1884"# where testid in (select distinct testid from commentary where bat='293')"
 cursor.execute(query)
 results=cursor.fetchall()
 vocab = {}
@@ -382,8 +385,10 @@ loadStopwords()
 loadwords()
 #print pitch
 tokenizer = RegexpTokenizer(r'\w+')
-#extractFeatures(results)
+
+#print tokenizer.tokenize("what's up bitches, you faggots?")
+extractFeatures(results)
 #addPaceBounce()
 #fixSpin()
-fixBowlFeatures('grass')
-fixBowlFeatures('swing')
+# fixBowlFeatures('grass')
+# fixBowlFeatures('swing')

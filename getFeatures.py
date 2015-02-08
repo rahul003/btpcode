@@ -20,7 +20,7 @@ def commonGetFeatures(which,testid, day, session):
 				cursor.execute(query)
 				db.commit()
 				session_data = cursor.fetchall()
-				print 'all:',which, session_data
+				#print 'all:',which, session_data
 			except:
 				print 'couldnt fetch all of test'
 
@@ -29,23 +29,32 @@ def commonGetFeatures(which,testid, day, session):
 			found = False
 			while i>0:
 				while j>0:
-					print i,j
+					#print i,j
 					rv = getEntry(session_data,i,j)
+
 					#print rv
 					if rv:
 						found = True
+						rv = list(rv)
 						break
 					j-=1
 				if found:
 					break
 				i-=1
 				j=4
+			
+		
 			if not found:
 				if which == 'weather':
-					rv = (0,0,0,0,0,0,0)
-				elif which == 'pitch':
-					rv = (0,0,0,0,0,0,0,0,0,0,0,0)
-			return list(rv)
+					rv = [0,0,0,0,0,0,0]t
+				elif which == 'pitch_new':
+					rv = [0,0,0,0,0,0,0,0,0,0,0,0]
+
+			if which =='pitch_new':
+				rv = checkPrevSpin(rv,which)
+				rv = fixDry(rv)
+				rv = paceandbounce(rv)
+			return rv
 		else:
 			print which, session_data
 			return list(session_data[0])
@@ -59,7 +68,7 @@ def getFeatures(testid, day, session):
 		
 	rval  = dict()
 	rval['weather'] = commonGetFeatures('weather',testid,day,session)
-	rval['pitch'] = commonGetFeatures('pitch',testid,day,session)
+	rval['pitch_new'] = commonGetFeatures('pitch_new',testid,day,session)
 	print rval
 	return rval
 
@@ -67,17 +76,46 @@ def getEntry(data, day, session):
 	for item in data:
 		if item[1]==day and item[2]==session:
 			return item
-
 	return None
 
 
+def checkPrevSpin(rv,which):
+	print rv
+	query="select day,session,spin from "+ str(which)+" where testid='"+str(rv[0])+"'"#" and day='"+str(rv[1])+"' and session='"+str(rv[2])+"'"
+	cursor.execute(query)
+	db.commit()
+	session_data= cursor.fetchall()
+	#print session_data
+	for item in session_data:
+		print item
+		if (item[0],item[1]) < (rv[1],rv[2]):
+			if item[2]>0:
+				rv[7]=item[2]
+				break
+	#print rv
+	return rv
+
+def fixDry(rv):
+	print rv
+	if rv[11]>0 and rv[1]<=2:
+		rv[10] = rv[11]
+	elif rv[11]>0 and rv[1]>2:
+		rv[7] = rv[11]
+	print rv
+	return rv
+
+def paceandbounce(rv):
+	if rv[5] and rv[6]:
+		rv[4] = rv[5]+rv[6]
+	return rv
 
 # Open database connection
-db = mdb.connect("172.16.27.19","rahul","rahul123","cridatics", use_unicode = True, charset = "utf8")
+db = mdb.connect("10.11.12.14","rahul","rahul123","cridatics", use_unicode = True, charset = "utf8")
 
 # # prepare a cursor object using cursor() method
 cursor = db.cursor()
      
 r = getFeatures(2085,2,3)
+print r
 print r['weather']
 print r['weather'][4]
