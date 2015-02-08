@@ -1,0 +1,9 @@
+green
+grass,juice,pacerfriendly,lively,juicy,grassy
+bounce,hard,rocky,bouncy
+pace,skiddy,skid,fast,pacy
+spin,rough,grip,dusty,crack,crumble,deteriorate,turn,worn,wear
+slow,loose,dull
+swing,seam,seammovement,movement,bowlerfriendly,moisture
+flat,battingparadise,dead,batsmenfriendly,lifeless
+dry,drier
