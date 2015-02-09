@@ -141,16 +141,20 @@ def extractFeatures(results):
 		if not text[0:2]=='0.1':
 			lines = text.split('.')
 			for line in lines:
-
+				# print 'line: ',line
 				line.strip('\n')
 				#line = line.replace(',',' ')
 				#tokensl = line.split(' ')
 				tokensl = tokenizer.tokenize(line)
+				# print tokensl
+				# print 'green' in stopwords
 				tokens = (Set(tokensl) - stopwords)
+				# print tokens
 				tokens = [stemmer.stem(t) for t in tokens]
 				tokensl = [stemmer.stem(t) for t in tokensl]
 				tokens = Set(tokens)
 				# print tokens
+				# print tokensl
 				# print tokens & weather
 				if tokens & weather:
 					negation = False
@@ -167,7 +171,7 @@ def extractFeatures(results):
 							count+=1
 										
 						if word in weather:
-							#print word, line, tokens
+							# print word,":", line, negation
 							clas = reversecollection[word]
 							if negation:
 								#clas = getOpp(clas)#addtooppclass
@@ -179,13 +183,14 @@ def extractFeatures(results):
 							except:
 								print 'weather:',clas, word, row[0],row[1],row[2]
 				#if str(row[0])=='1806':
-				#	print tokens
+				# print tokens
 				if tokens & pitch:
-					#print 'matched', tokensl
+					# print 'matched', tokensl
 					negation = False
 					count = 0
 					#print tokensl
 					for word in tokensl:
+						# print word
 						#print word,word in negationList,count, negation
 						if word in negationList:
 							negation = True
@@ -198,6 +203,7 @@ def extractFeatures(results):
 							count+=1
 						if word in pitch:
 							#print word, line
+							# print word,":", line, negation
 							clas = reversecollection[word]
 							if negation:
 								#print 'negated', row[0],row[1],row[2], line, word
@@ -228,16 +234,6 @@ def extractFeatures(results):
 			if not isEmpty(weatherwords):
 				s=0
 				t=0
-				# for w in weatherwords['rain']:
-				# 	if weatherwords['rain'][w]!=0:
-				# 		s+=1
-				# for w in weatherwords['hot']:
-				# 	if weatherwords['hot'][w]!=0:
-				# 		t+=1
-				# if s>0 and t>0:
-				# 	for w in weatherwords['rain']:
-				# 		weatherwords['rain'][w]=0
-
 				query = "insert into weather_new(testid,day,session"
 				for collection in weatherwords:
 					query+=","
@@ -251,9 +247,9 @@ def extractFeatures(results):
 				query+=")"
 				#print query
 				try:
-					#pass
-					cursor.execute(query)
-					db.commit()
+					pass
+					# cursor.execute(query)
+					# db.commit()
 				except mdb.IntegrityError:
 					pass
 					#print "failed to insert data"
@@ -279,8 +275,8 @@ def extractFeatures(results):
 				#print query
 				try:
 					#pass
-					cursor.execute(query)
-					db.commit()
+					# cursor.execute(query)
+					# db.commit()
 					counttoprint+=1
 				except mdb.IntegrityError:
 					pass
@@ -373,21 +369,78 @@ def addPaceBounce():
 	except:
 		print 'failed update query',query  				
 
+def updategreen(results):
+	counttoprint = 0
+	for row in results:
+		text = row[3].lower()
+		initddict()
+		if not text[0:2]=='0.1':
+			lines = text.split('.')
+			for line in lines:
+				line.strip('\n')
+				line = line.replace(',',' ')
+				#tokensl = line.split(' ')
+				tokensl = tokenizer.tokenize(line)
+				tokens = (Set(tokensl) - stopwords)
+				tokens = [stemmer.stem(t) for t in tokens]
+				tokensl = [stemmer.stem(t) for t in tokensl]
+				tokens = Set(tokens)
+				if tokens & pitch:
+					negation = False
+					count = 0
+					for word in tokensl:
+						if word in negationList:
+							negation = True
+							count = 0
+							continue
+						elif count>3:
+							negation = False
+						elif negation:
+							count+=1
+						if word in pitch:
+							clas = reversecollection[word]
+							if negation:
+								clas = getOpp(clas)#addtooppclass
+								if clas == None:
+									continue
+								negation = False
+							try:
+								pitchwords[clas][clas]+=1
+							except:
+								print 'pitch:',clas, word, reversecollection[word],row[0],row[1],row[2]
+			#print pitchwords['green']
+			if pitchwords['green']['green']:
+				query = "update pitch_new set green="
+				query += str(pitchwords['green']['green'])
+				query+=" where testid="+str(row[0])+" and day="+str(row[1])+" and session="+str(row[2])
+				#print query
+				try:
+#					pass
+					cursor.execute(query)
+					db.commit()
+					counttoprint+=1
+				except mdb.IntegrityError:
+					pass
+			else:
+				pass
 
 #db = mdb.connect("192.168.201.1","rahul","rahul123","cridatics",use_unicode = True, charset = "utf8")
-db = mdb.connect("10.11.12.14","rahul","rahul123","cridatics",use_unicode = True, charset = "utf8")
+db = mdb.connect("172.16.27.19","rahul","rahul123","cridatics",use_unicode = True, charset = "utf8")
 cursor = db.cursor()
 query = "select testid,day,session,text from envtextnew"# where testid=1884"# where testid in (select distinct testid from commentary where bat='293')"
+
 cursor.execute(query)
 results=cursor.fetchall()
 vocab = {}
 loadStopwords()
 loadwords()
-#print pitch
+#print stopwords
 tokenizer = RegexpTokenizer(r'\w+')
 
 #print tokenizer.tokenize("what's up bitches, you faggots?")
-extractFeatures(results)
+#print results
+#extractFeatures(results)
+updategreen(results)
 #addPaceBounce()
 #fixSpin()
 # fixBowlFeatures('grass')

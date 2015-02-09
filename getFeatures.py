@@ -54,6 +54,7 @@ def commonGetFeatures(which,testid, day, session):
 				rv = checkPrevSpin(rv,which)
 				rv = fixDry(rv)
 				rv = paceandbounce(rv)
+				rv = sumupgrass(rv)
 			return rv
 		else:
 			print which, session_data
@@ -95,9 +96,15 @@ def checkPrevSpin(rv,which):
 	#print rv
 	return rv
 
+#return grass+green adn swing+green
 def fixDry(rv):
+	#if first or secodn day, flat. else spin
+	#if dry and swing: then remove flat for first days
+	#9 is swing
+	# 11 is dry
+	# 10 is flat
 	print rv
-	if rv[11]>0 and rv[1]<=2:
+	if rv[11]>0 and rv[1]<=2 and not rv[9]:
 		rv[10] = rv[11]
 	elif rv[11]>0 and rv[1]>2:
 		rv[7] = rv[11]
@@ -109,7 +116,12 @@ def paceandbounce(rv):
 		rv[4] = rv[5]+rv[6]
 	return rv
 
+def sumupgrass(rv):
+	rv[4] +=rv[3]
+	rv[9]+=rv[3]
+	return rv
 # Open database connection
+
 db = mdb.connect("10.11.12.14","rahul","rahul123","cridatics", use_unicode = True, charset = "utf8")
 
 # # prepare a cursor object using cursor() method

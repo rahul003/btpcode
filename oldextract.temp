@@ -1,0 +1,30 @@
+			# query += str(weatherwords['overcast'])+","
+			# query += str(weatherwords['show'])+","
+			# query += str(weatherwords['overhead'])+","
+			# query += str(weatherwords['gloom'])+","
+			# query += str(weatherwords['moist'])+","
+			# query += str(weatherwords['humid']+weatherwords['sultry'])+","
+			# query += str(weatherwords['rain']+weatherwords['rainy'])+","
+			# query += str(weatherwords['sunny']+weatherwords['sun']+weatherwords['hot']+weatherwords['bright'])+")"
+
+	#overcast,showers,overhead,gloom,moist,humid,rain,sunny) values("+str(row[0])+","+str(row[1])+","+str(row[2])+","
+
+
+
+
+
+		# if not isEmpty(pitchwords):
+		# 	print pitchwordsdict
+		# 	query = "insert into pitch(testid, day, session, bouncy, juicy, fast,slow,dusty,green,flat,crack,dull) values ("+str(row[0])+","+str(row[1])+","+str(row[2])+","
+		# 	query += str(pitchwordsdict['bount'])+","
+		# 	query += str(pitchwordsdict['juic']+pitchwordsdict['juicy'])+","
+		# 	query += str(pitchwordsdict['fast'])+","
+		# 	query += str(pitchwordsdict['slow'])+","
+		# 	query += str(pitchwordsdict['dusty'])+","
+		# 	query += str(pitchwordsdict['green'])+","
+		# 	query += str(pitchwordsdict['flat'])+","
+		# 	query += str(pitchwordsdict['crack'])+","
+		# 	#query += str(pitchwordsdict['quick'])+","
+		# 	query += str(pitchwordsdict['dul'])+")"
+		# 	print query   
+			#overcast,showers,overhead,gloom,moist,humid,rain,sunny) values("+str(row[0])+","+str(row[1])+","+str(row[2])+","

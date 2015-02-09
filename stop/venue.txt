@@ -345,7 +345,6 @@ ellis
 park
 johannesburg
 gauteng
-green
 park
 stadium
 kanpur

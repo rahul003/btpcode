@@ -1,0 +1,28 @@
+errors
+-----
+run again. just corrected overs
+1846
+-----------------
+bug to solve: innings in prev page 
+like 99.6 49.6...
+
+also 0 as beginning of innings: bug 
+-------------
+innings in overslist
+1826 inn5
+1820 inn5
+1827 inn5
+1829 ,,
+
+1836 inn0
+1902 all overs wrong
+1904 no 93.6
+1934
+1941
+1981
+1884
+1910 all wrong
+-----------
+1891
+
+1955 all wrong

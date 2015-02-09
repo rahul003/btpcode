@@ -58,7 +58,7 @@ for collection in pitchwords:
 	for word in pitchwords[collection].keys():
 		print word, LancasterStemmer().stem(word), porter.stem(word)
 
-print porter.stem('moisture')
+print porter.stem('dried')
 #print LancasterStemmer().stem('spins'), porter.stem('cracks')
 # tokens = weatherwords.keys()
 # ttokens = [token.keys() for token in tokens]
