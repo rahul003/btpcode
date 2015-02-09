@@ -1,4 +1,4 @@
-rain,rainy,overcast,showers,overhead,cloud,cloudy,gloomy, muggy
+rain,rainy,overcast,showers,overhead,cloud,cloudy,gloomy,muggy
 breeze,breezy,windy,wind
 moist,humid
-hot,sunny,sun,bright,sultry,sunshine, heat
+hot,sunny,sun,bright,sultry,sunshine,heat,warm

@@ -7,6 +7,8 @@ import datetime
 import time
 import sys, os
 from time import strptime
+db = mdb.connect("127.0.0.1","root","","cridatics", use_unicode = False, charset = "utf8")
+cursor = db.cursor()
 
 def commonGetFeatures(which,testid, day, session):
 	query="select * from "+ str(which)+" where testid='"+str(testid)+"' and day='"+str(day)+"' and session='"+str(session)+"'"
@@ -46,19 +48,21 @@ def commonGetFeatures(which,testid, day, session):
 		
 			if not found:
 				if which == 'weather':
-					rv = [0,0,0,0,0,0,0]t
+					rv = [0,0,0,0,0,0,0]
 				elif which == 'pitch_new':
 					rv = [0,0,0,0,0,0,0,0,0,0,0,0]
-
-			if which =='pitch_new':
-				rv = checkPrevSpin(rv,which)
-				rv = fixDry(rv)
-				rv = paceandbounce(rv)
-				rv = sumupgrass(rv)
-			return rv
+		
 		else:
 			print which, session_data
-			return list(session_data[0])
+			rv =  list(session_data[0])
+
+		if which=='pitch_new':
+			rv = checkPrevSpin(rv,which,cursor)
+			rv = fixDry(rv)
+			rv = paceandbounce(rv)
+			rv = sumupgrass(rv)
+		
+		return rv[3:]
 	except mdb.IntegrityError:
 		print "failed to get data", query
 
@@ -69,7 +73,7 @@ def getFeatures(testid, day, session):
 		
 	rval  = dict()
 	rval['weather'] = commonGetFeatures('weather',testid,day,session)
-	rval['pitch_new'] = commonGetFeatures('pitch_new',testid,day,session)
+	rval['pitch'] = commonGetFeatures('pitch_new',testid,day,session)
 	print rval
 	return rval
 
@@ -122,12 +126,12 @@ def sumupgrass(rv):
 	return rv
 # Open database connection
 
-db = mdb.connect("10.11.12.14","rahul","rahul123","cridatics", use_unicode = True, charset = "utf8")
+# db = mdb.connect("10.11.12.14","rahul","rahul123","cridatics", use_unicode = True, charset = "utf8")
 
-# # prepare a cursor object using cursor() method
-cursor = db.cursor()
+# # # prepare a cursor object using cursor() method
+# cursor = db.cursor()
      
-r = getFeatures(2085,2,3)
-print r
-print r['weather']
-print r['weather'][4]
+# r = getFeatures(2085,2,3)
+# print r
+# print r['weather']
+# print r['weather'][4]
